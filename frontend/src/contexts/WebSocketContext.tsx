@@ -28,10 +28,21 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children, 
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    // In a real app, the URL would be dynamic based on environment
-    const socket = new SockJS('http://localhost:8080/ws-chat');
+    // Dynamically match protocol to prevent browser SecurityError on HTTPS Vercel domains
+    const defaultUrl = window.location.protocol === 'https:'
+      ? 'https://localhost:8080/ws-chat'
+      : 'http://localhost:8080/ws-chat';
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || defaultUrl;
+
     const stompClient = new Client({
-      webSocketFactory: () => socket,
+      webSocketFactory: () => {
+        try {
+          return new SockJS(backendUrl);
+        } catch (err) {
+          console.warn('SockJS initialization failed:', err);
+          return null as any;
+        }
+      },
       debug: () => {
         // no-op
       },
