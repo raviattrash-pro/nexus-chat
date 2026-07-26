@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
@@ -32,8 +32,8 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children, 
     const socket = new SockJS('http://localhost:8080/ws-chat');
     const stompClient = new Client({
       webSocketFactory: () => socket,
-      debug: (str) => {
-        // console.log(str);
+      debug: () => {
+        // no-op
       },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,

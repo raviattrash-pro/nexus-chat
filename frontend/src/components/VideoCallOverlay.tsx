@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWebSocket } from '../contexts/WebSocketContext';
 import './VideoCallOverlay.css';
@@ -9,7 +9,7 @@ interface VideoCallOverlayProps {
   targetUserName: string;
   isActive: boolean;
   isIncoming: boolean;
-  callType: 'audio' | 'video';
+  callType: 'audio' | 'video' | null;
   onEndCall: () => void;
 }
 

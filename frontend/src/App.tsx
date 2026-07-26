@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import ReactMarkdown from 'react-markdown';
 import KlarnaCarousel, { type CarouselItem, DEFAULT_ITEMS } from './components/KlarnaCarousel';
 import LoginScreen from './components/LoginScreen';
 import AddContactModal from './components/AddContactModal';
 import SettingsModal from './components/SettingsModal';
 import CreateGroupModal from './components/CreateGroupModal';
-import { GoogleLogin, googleLogout } from '@react-oauth/google';
+import { googleLogout } from '@react-oauth/google';
 
 import { WebSocketProvider, useWebSocket } from './contexts/WebSocketContext';
 import VideoCallOverlay from './components/VideoCallOverlay';
@@ -113,7 +112,6 @@ function AppContent() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Modals & Panels
-  const [isSavedPanelOpen, setIsSavedPanelOpen] = useState(false);
   const [isAddContactOpen, setIsAddContactOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -623,10 +621,10 @@ function AppContent() {
       <VideoCallOverlay 
         currentUserId={currentUserId}
         targetUserId={activeContact ? activeContact.id || "target_user_123" : null}
-        targetUserName={activeContact ? activeContact.label : ""}
+        targetUserName={activeContact?.label || "User"}
         isActive={callState.isActive}
         isIncoming={callState.isIncoming}
-        callType={callState.callType as 'audio' | 'video'}
+        callType={callState.callType as 'audio' | 'video' | null}
         onEndCall={() => setCallState({ isActive: false, isIncoming: false, callType: null })}
       />
 
