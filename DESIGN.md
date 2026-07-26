@@ -89,12 +89,12 @@ classDiagram
         -String username
         -String avatarUrl
         -String status
-        -List~String~ followingIds
-        -List~SavedItem~ savedItems
+        -List followingIds
+        -List savedItems
         -GeoJsonPoint location
         +getId() String
-        +getSavedItems() List~SavedItem~
-        +getFollowingIds() Set~String~
+        +getSavedItems() List
+        +getFollowingIds() Set
     }
 
     class SavedItem {
@@ -123,11 +123,11 @@ classDiagram
     }
 
     class ApiController {
-        +createUser(User) ResponseEntity~User~
-        +getFollowing(String) ResponseEntity~List~User~~
-        +saveItem(String, SavedItem) ResponseEntity~User~
-        +deleteSavedItem(String, String) ResponseEntity~User~
-        +searchUsers(String) ResponseEntity~List~User~~
+        +createUser(User) ResponseEntity
+        +getFollowing(String) ResponseEntity
+        +saveItem(String, SavedItem) ResponseEntity
+        +deleteSavedItem(String, String) ResponseEntity
+        +searchUsers(String) ResponseEntity
     }
 
     class ChatController {

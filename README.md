@@ -19,9 +19,9 @@
 
 | **3D Interactive Contact Carousel** | **Live Chat Window & Editing** |
 | :---: | :---: |
-| ![3D Carousel UI](https://via.placeholder.com/600x350/0a0a0a/3b82f6?text=3D+Klarna+Carousel+Workspace) | ![Live Chat](https://via.placeholder.com/600x350/0a0a0a/3b82f6?text=Real-Time+Chat+%2B+Message+Editing) |
+| ![3D Carousel UI](https://placehold.co/600x350/0e1726/3b82f6.png?text=3D+Klarna+Carousel+UI) | ![Live Chat](https://placehold.co/600x350/0e1726/3b82f6.png?text=Real-Time+Chat+%2B+Message+Editing) |
 | **Advanced Saved Space (Images & Notes)** | **WebRTC Voice/Video Signaling Overlay** |
-| ![Saved Space](https://via.placeholder.com/600x350/0a0a0a/3b82f6?text=Saved+Space+%2B+File+Attachments) | ![Video Overlay](https://via.placeholder.com/600x350/0a0a0a/3b82f6?text=Voice+%26+Video+Call+Signaling) |
+| ![Saved Space](https://placehold.co/600x350/0e1726/3b82f6.png?text=Saved+Space+%2B+File+Attachments) | ![Video Overlay](https://placehold.co/600x350/0e1726/3b82f6.png?text=Voice+%26+Video+Call+Signaling) |
 
 ---
 
@@ -65,35 +65,34 @@
 The High-Level Architecture separates the client-side presentation layer from the Spring Boot service layer, communicating via REST over HTTP and bidirectional STOMP WebSockets over SockJS.
 
 ```mermaid
-graph TD
-    subgraph Client ["Client Layer (React / Vite PWA)"]
+flowchart TB
+    subgraph Client ["Client Layer"]
         UI["React 18 Single Page App"]
         KC["3D Klarna Carousel UI"]
         VC["Video/Audio Call Overlay"]
         SS["Saved Space Drawer"]
-        PWA["PWA Install / Service Worker"]
     end
 
-    subgraph Gateways ["Network / Gateway Layer"]
+    subgraph Gateways ["Gateway & Network Layer"]
         REST["REST API (HTTP/HTTPS)"]
         WS["STOMP / SockJS WebSockets"]
         OAUTH["Google OAuth 2.0 Provider"]
     end
 
-    subgraph Backend ["Service Layer (Spring Boot 3.x)"]
-        AC["ApiController (Users, Search, Follow, SavedSpace)"]
-        CC["ChatController (STOMP Message & Call Broker)"]
-        WSC["WebSocketConfig (StompEndpointRegistry)"]
+    subgraph Backend ["Spring Boot 3.x Service Layer"]
+        AC["ApiController (REST API)"]
+        CC["ChatController (STOMP Broker)"]
+        WSC["WebSocketConfig"]
     end
 
-    subgraph Data ["Data Layer (MongoDB)"]
+    subgraph Data ["Database Layer"]
         DB[(MongoDB Database)]
-        GEO["2dsphere Geospatial Index (Find Nearby)"]
+        GEO["2dsphere Geospatial Index"]
     end
 
     UI --> REST
     UI <--> WS
-    UI -. Auth Token .-> OAUTH
+    UI -.-> OAUTH
 
     REST --> AC
     WS <--> CC
@@ -119,8 +118,8 @@ classDiagram
         +String username
         +String avatarUrl
         +String status
-        +List~String~ followingIds
-        +List~SavedItem~ savedItems
+        +List followingIds
+        +List savedItems
         +GeoJsonPoint location
     }
 
@@ -145,7 +144,7 @@ classDiagram
     }
 
     User "1" *-- "0..*" SavedItem : contains
-    User "1" --> "0..*" User : followingIds (references)
+    User "1" --> "0..*" User : followingIds
     Message "0..*" --> "1" User : senderId
     Message "0..*" --> "1" User : receiverId
 ```
@@ -160,41 +159,35 @@ sequenceDiagram
     autonumber
     actor Alice as Alice (Sender)
     participant UI_A as Alice UI (React)
-    participant STOMP as STOMP Broker (/app/chat.*)
+    participant STOMP as STOMP Broker
     participant SB as Spring Boot Backend
     participant DB as MongoDB
     participant UI_B as Bob UI (React)
     actor Bob as Bob (Receiver)
 
     Alice->>UI_A: Type Message & Hit Send
-    UI_A->>STOMP: sendMessage('/app/chat.sendMessage', payload)
-    STOMP->>SB: ChatController.sendMessage(payload)
+    UI_A->>STOMP: sendMessage(/app/chat.sendMessage)
+    STOMP->>SB: ChatController.sendMessage()
     SB->>DB: messageRepository.save(message)
-    DB-->>SB: savedMessage (with timestamp)
+    DB-->>SB: savedMessage
+
+    SB->>UI_A: /topic/user.Alice (confirm sent)
+    UI_A->>UI_A: Move Bob to top of Carousel
     
-    par Broadcast to Sender
-        SB->>UI_A: /topic/user.Alice (confirm sent)
-        UI_A->>UI_A: Append message & move Bob to top of Carousel
-    and Broadcast to Receiver
-        SB->>UI_B: /topic/user.Bob (incoming message)
-        alt Bob has Alice chat active
-            UI_B->>UI_B: Append message to chat window
-        else Bob is viewing another screen / Carousel
-            UI_B->>UI_B: Increment unreadCount badge on Alice's Avatar
-            UI_B->>UI_B: Play Notification Chime & Show Slide-In Toast
-        end
-        UI_B->>UI_B: Bubble Alice to top of Carousel (WhatsApp sort)
-    end
+    SB->>UI_B: /topic/user.Bob (incoming message)
+    UI_B->>UI_B: Increment unreadCount badge
+    UI_B->>UI_B: Play Sound & Show Toast Alert
+    UI_B->>UI_B: Bubble Alice to top of Carousel
 
     Note over Alice,Bob: Live Message Editing Flow
-    Alice->>UI_A: Click Edit Pencil -> Update Text -> Send
-    UI_A->>STOMP: sendMessage('/app/chat.editMessage', {messageId, content})
+    Alice->>UI_A: Edit Text -> Send
+    UI_A->>STOMP: sendMessage(/app/chat.editMessage)
     STOMP->>SB: ChatController.editMessage()
-    SB->>DB: Update msg.content & set msg.edited = true
-    SB->>UI_A: /topic/user.Alice (broadcast updated message)
-    SB->>UI_B: /topic/user.Bob (broadcast updated message)
-    UI_A->>UI_A: Replace message inline with "(edited)" tag
-    UI_B->>UI_B: Replace message inline with "(edited)" tag
+    SB->>DB: Update content & set edited = true
+    SB->>UI_A: /topic/user.Alice (broadcast edit)
+    SB->>UI_B: /topic/user.Bob (broadcast edit)
+    UI_A->>UI_A: Show (edited) tag
+    UI_B->>UI_B: Show (edited) tag
 ```
 
 ---
