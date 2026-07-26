@@ -13,15 +13,20 @@
 
 ---
 
-## 📸 Application Preview & UI Walkthrough
+<div align="center">
+  <img src="./docs/hero_preview.jpg" alt="NexusChat UI Mockup" width="850" style="border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+  <p><i>NexusChat — Featuring 3D Orbital Contact Carousel, Glassmorphic Live Chat, and WebRTC Call Signaling</i></p>
+</div>
 
-> *Note: Place your actual screenshot image paths below in your repository (e.g., `./docs/images/screenshot1.png`).*
-
-| **3D Interactive Contact Carousel** | **Live Chat Window & Editing** |
-| :---: | :---: |
-| ![3D Carousel UI](https://placehold.co/600x350/0e1726/3b82f6.png?text=3D+Klarna+Carousel+UI) | ![Live Chat](https://placehold.co/600x350/0e1726/3b82f6.png?text=Real-Time+Chat+%2B+Message+Editing) |
-| **Advanced Saved Space (Images & Notes)** | **WebRTC Voice/Video Signaling Overlay** |
-| ![Saved Space](https://placehold.co/600x350/0e1726/3b82f6.png?text=Saved+Space+%2B+File+Attachments) | ![Video Overlay](https://placehold.co/600x350/0e1726/3b82f6.png?text=Voice+%26+Video+Call+Signaling) |
+### 🎯 Quick Feature Jump (Click to Explore)
+<div align="center">
+  <a href="#1--3d-klarna-circular-carousel-workspace"><b>🌀 3D Carousel UI</b></a> •
+  <a href="#2--real-time-stomp--websockets-messaging"><b>⚡ Live STOMP WebSockets</b></a> •
+  <a href="#3--google-oauth-20--smart-account-management"><b>🔐 Google Auth 2.0</b></a> •
+  <a href="#4--advanced-saved-space-personal-workspace"><b>💾 Saved Space (Attachments)</b></a> •
+  <a href="#5--webrtc-call-signaling--presence"><b>📞 WebRTC Signaling</b></a> •
+  <a href="#6--progressive-web-app-pwa--responsive-design"><b>📱 PWA Ready</b></a>
+</div>
 
 ---
 
