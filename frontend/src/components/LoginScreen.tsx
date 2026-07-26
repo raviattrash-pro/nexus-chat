@@ -4,9 +4,10 @@ import './LoginScreen.css';
 
 interface LoginScreenProps {
   onLoginSuccess: (credentialResponse: any) => void;
+  onGuestLogin?: () => void;
 }
 
-export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
+export default function LoginScreen({ onLoginSuccess, onGuestLogin }: LoginScreenProps) {
   return (
     <div className="login-container">
       <motion.div 
@@ -50,6 +51,31 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
               text="continue_with"
             />
           </div>
+
+          {onGuestLogin && (
+            <div style={{ marginTop: 16, display: 'flex', justifyContent: 'center' }}>
+              <button
+                type="button"
+                onClick={onGuestLogin}
+                style={{
+                  background: 'rgba(155, 114, 229, 0.15)',
+                  color: '#9b72e5',
+                  border: '1px solid #9b72e5',
+                  padding: '10px 24px',
+                  borderRadius: '30px',
+                  fontWeight: 600,
+                  fontSize: 14,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8
+                }}
+              >
+                <span>🚀 Explore Demo (Guest Mode)</span>
+              </button>
+            </div>
+          )}
 
           <p className="terms-text">
             Don't have an account? Google Sign-In will automatically create one for you. <br/><br/>

@@ -69,12 +69,40 @@ function AppContent() {
       setUserAvatar(avatarToSet);
       
     } catch (e) {
-      console.error("Failed to sync user with backend", e);
+      console.error("Failed to sync user with backend (running offline mode)", e);
+      const fallbackUser = {
+        id: "google_" + (payload.sub || Date.now()),
+        email: payload.email,
+        username: payload.name || "Google User",
+        avatarUrl: avatarToSet,
+        savedItems: []
+      };
+      localStorage.setItem('nexus_user', JSON.stringify(fallbackUser));
+      setCurrentUserData(fallbackUser);
+      localStorage.setItem('nexus_avatar', avatarToSet);
+      setUserAvatar(avatarToSet);
     }
 
     localStorage.setItem('nexus_auth', 'true');
     setIsAuthenticated(true);
   };
+
+  const handleGuestLogin = () => {
+    const guestUser = {
+      id: "guest_" + Date.now().toString().slice(-4),
+      email: "guest@nexuschat.dev",
+      username: "Demo Guest User",
+      avatarUrl: defaultAvatar,
+      savedItems: []
+    };
+    localStorage.setItem('nexus_user', JSON.stringify(guestUser));
+    setCurrentUserData(guestUser);
+    localStorage.setItem('nexus_avatar', defaultAvatar);
+    setUserAvatar(defaultAvatar);
+    localStorage.setItem('nexus_auth', 'true');
+    setIsAuthenticated(true);
+  };
+
   const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('nexus_auth') === 'true');
   const [activeContact, setActiveContact] = useState<CarouselItem | null>(null);
   const [contactList, setContactList] = useState<CarouselItem[]>(DEFAULT_ITEMS);
@@ -391,7 +419,7 @@ function AppContent() {
   };
 
   if (!isAuthenticated) {
-    return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
+    return <LoginScreen onLoginSuccess={handleLoginSuccess} onGuestLogin={handleGuestLogin} />;
   }
 
   return (
